@@ -80,7 +80,7 @@ describe('fingro-webfinger', function() {
         expect(services).to.be.an('object');
         expect(Object.keys(services)).to.have.length(10);
         expect(services['http://webfinger.net/rel/avatar']).to.deep.equal([
-          { location: 'http://www.packetizer.com/people/paulej/images/paulej.jpg', type: 'image/jpeg' }
+          { location: 'http://www.packetizer.com/people/paulej/images/paulej.jpg', mediaType: 'image/jpeg' }
         ]);
       });
     });
@@ -122,7 +122,7 @@ describe('fingro-webfinger', function() {
         expect(services).to.be.an('array');
         expect(services).to.have.length(1);
         expect(services[0]).to.deep.equal(
-          { location: 'https://openid.packetizer.com/paulej', type: undefined }
+          { location: 'https://openid.packetizer.com/paulej', mediaType: undefined }
         );
       });
     });
@@ -196,7 +196,7 @@ describe('fingro-webfinger', function() {
         expect(services).to.be.an('array');
         expect(services).to.have.length(1);
         expect(services[0]).to.deep.equal(
-          { location: 'https://willnorris.com/logo.jpg', type: 'image/jpeg' }
+          { location: 'https://willnorris.com/logo.jpg', mediaType: 'image/jpeg' }
         );
       });
     });
