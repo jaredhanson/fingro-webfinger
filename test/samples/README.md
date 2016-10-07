@@ -1,0 +1,2 @@
+- paulej_packetizer.com
+  $ curl -v https://packetizer.com/.well-known/webfinger?resource=acct%3Apaulej%40packetizer.com

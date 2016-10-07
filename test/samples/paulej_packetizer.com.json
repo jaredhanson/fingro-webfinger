@@ -1,0 +1,64 @@
+{
+  "aliases": [
+    "h323:paulej@packetizer.com"
+  ],
+  "properties": {
+    "http://packetizer.com/ns/name": "Paul E. Jones",
+    "http://packetizer.com/ns/activated": "2000-02-17T03:00:00Z",
+    "http://packetizer.com/ns/name#zh-CN": "保罗‧琼斯"
+  },
+  "subject": "acct:paulej@packetizer.com",
+  "links": [
+    {
+      "type": "image/jpeg",
+      "href": "http://www.packetizer.com/people/paulej/images/paulej.jpg",
+      "rel": "http://webfinger.net/rel/avatar"
+    },
+    {
+      "href": "https://openid.packetizer.com/paulej",
+      "rel": "http://specs.openid.net/auth/2.0/provider"
+    },
+    {
+      "rel": "http://packetizer.com/rel/share",
+      "type": "text/html",
+      "href": "http://hive.packetizer.com/users/paulej/"
+    },
+    {
+      "href": "http://www.packetizer.com/people/paulej/",
+      "type": "text/html",
+      "rel": "http://webfinger.net/rel/profile-page"
+    },
+    {
+      "type": "text/html",
+      "href": "http://www.packetizer.com/people/paulej/blog/",
+      "rel": "http://packetizer.com/rel/blog",
+      "titles": {
+        "en-us": "Paul E. Jones' Blog"
+      }
+    },
+    {
+      "rel": "http://packetizer.com/rel/businesscard",
+      "href": "http://www.packetizer.com/people/paulej/paulej.vcf",
+      "type": "text/vcard"
+    },
+    {
+      "href": "http://www.packetizer.com/people/paulej/blog/blog.xml",
+      "type": "application/atom+xml",
+      "rel": "http://schemas.google.com/g/2010#updates-from"
+    },
+    {
+      "type": "text/html",
+      "href": "http://www.packetizer.com/people/paulej/",
+      "rel": "http://microformats.org/profile/hcard"
+    },
+    {
+      "rel": "http://bitcoin.org/rel/address",
+      "href": "bitcoin:17XoqvUCrf12H7Vc7c7uDxib8FDMXFx2p6"
+    },
+    {
+      "rel": "http://bitcoin.org/rel/payments",
+      "type": "text/plain",
+      "href": "https://secure.packetizer.com/bitcoin_address/?account=paulej"
+    }
+  ]
+}
