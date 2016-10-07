@@ -58,6 +58,7 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
+      var services;
       before(function(done) {
         var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
         
@@ -96,6 +97,7 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
+      var services;
       before(function(done) {
         var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
         
@@ -116,6 +118,68 @@ describe('fingro-webfinger', function() {
       it('should yeild services', function() {
         expect(services).to.be.an('object');
         expect(Object.keys(services)).to.have.length(1);
+      });
+    });
+    
+    describe('with type, querying service that does not filter based on rel', function() {
+      var webfinger = sinon.stub().yields(null, {
+        subject: 'acct:will@willnorris.com',
+        aliases: [ 'mailto:will@willnorris.com', 'https://willnorris.com/' ],
+        links: [
+          { rel: 'http://webfinger.net/rel/avatar',
+            href: 'https://willnorris.com/logo.jpg',
+            type: 'image/jpeg' },
+          { rel: 'http://webfinger.net/rel/profile-page',
+            href: 'https://willnorris.com/',
+            type: 'text/html' }
+        ]
+      });
+      
+      var services;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveServices('acct:will@willnorris.com', 'http://webfinger.net/rel/avatar', function(err, s) {
+          if (err) { return done(err); }
+          services = s;
+          done();
+        })
+      });
+      
+      it('should call webfinger', function() {
+        expect(webfinger).to.have.been.calledOnce;
+        expect(webfinger).to.have.been.calledWith(
+          'acct:will@willnorris.com', 'http://webfinger.net/rel/avatar', { webfingerOnly: true }
+        );
+      });
+      
+      it('should yeild services', function() {
+        expect(services).to.be.an('object');
+        expect(Object.keys(services)).to.have.length(2);
+      });
+    });
+    
+    describe('error due to WebFinger not supported', function() {
+      var webfinger = sinon.stub().yields(new Error("Unable to find webfinger"));
+      
+      var error, services;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveServices('acct:joe@example.com', 'http://specs.openid.net/auth/2.0/provider', function(err, s) {
+          error = err;
+          services = s;
+          done();
+        })
+      });
+      
+      it('should yield error', function() {
+        expect(error).to.be.an.instanceOf(Error);
+        expect(error.message).to.equal('Unable to find webfinger');
+      });
+      
+      it('should not yeild services', function() {
+        expect(services).to.be.undefined;
       });
     });
     
