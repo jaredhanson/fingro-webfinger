@@ -1,7 +1,7 @@
 {
   "name": "fingro-webfinger",
   "version": "0.0.0",
-  "description": "TODO: No description specified",
+  "description": "WebFinger-based entity information discovery.",
   "keywords": [
     "webfinger"
   ],
