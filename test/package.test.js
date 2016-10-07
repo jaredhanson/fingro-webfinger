@@ -82,7 +82,7 @@ describe('fingro-webfinger', function() {
       });
     });
     
-    describe('with type', function() {
+    describe('with type, to service that filters link relations', function() {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -121,7 +121,39 @@ describe('fingro-webfinger', function() {
       });
     });
     
-    describe('with type, querying service that does not filter based on rel', function() {
+    describe('with unsupported type, to service that filters link relations', function() {
+      var webfinger = sinon.stub().yields(null, {
+        properties: {
+          'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+          'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+          'http://packetizer.com/ns/name': 'Paul E. Jones'
+        },
+        aliases: [ 'h323:paulej@packetizer.com' ],
+        subject: 'acct:paulej@packetizer.com'
+      });
+      
+      var error, services;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveServices('acct:paulej@packetizer.com', 'http://specs.openid.net/auth/2.0/x-provider', function(err, s) {
+          error = err;
+          services = s;
+          done();
+        })
+      });
+      
+      it('should yield error', function() {
+        expect(error).to.be.an.instanceOf(Error);
+        expect(error.message).to.equal('No links in JRD');
+      });
+      
+      it('should not yeild services', function() {
+        expect(services).to.be.undefined;
+      });
+    });
+    
+    describe('with type, to service that does not filter link relations', function() {
       var webfinger = sinon.stub().yields(null, {
         subject: 'acct:will@willnorris.com',
         aliases: [ 'mailto:will@willnorris.com', 'https://willnorris.com/' ],
@@ -150,6 +182,44 @@ describe('fingro-webfinger', function() {
         expect(webfinger).to.have.been.calledOnce;
         expect(webfinger).to.have.been.calledWith(
           'acct:will@willnorris.com', 'http://webfinger.net/rel/avatar', { webfingerOnly: true }
+        );
+      });
+      
+      it('should yeild services', function() {
+        expect(services).to.be.an('object');
+        expect(Object.keys(services)).to.have.length(2);
+      });
+    });
+    
+    describe('with unsupported type, to service that does not filter link relations', function() {
+      var webfinger = sinon.stub().yields(null, {
+        subject: 'acct:will@willnorris.com',
+        aliases: [ 'mailto:will@willnorris.com', 'https://willnorris.com/' ],
+        links: [
+          { rel: 'http://webfinger.net/rel/avatar',
+            href: 'https://willnorris.com/logo.jpg',
+            type: 'image/jpeg' },
+          { rel: 'http://webfinger.net/rel/profile-page',
+            href: 'https://willnorris.com/',
+            type: 'text/html' }
+        ]
+      });
+      
+      var services;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveServices('acct:will@willnorris.com', 'http://webfinger.net/rel/x-avatar', function(err, s) {
+          if (err) { return done(err); }
+          services = s;
+          done();
+        })
+      });
+      
+      it('should call webfinger', function() {
+        expect(webfinger).to.have.been.calledOnce;
+        expect(webfinger).to.have.been.calledWith(
+          'acct:will@willnorris.com', 'http://webfinger.net/rel/x-avatar', { webfingerOnly: true }
         );
       });
       
