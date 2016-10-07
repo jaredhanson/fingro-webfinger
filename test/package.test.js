@@ -151,7 +151,7 @@ describe('fingro-webfinger', function() {
       
       it('should yield error', function() {
         expect(error).to.be.an.instanceOf(Error);
-        expect(error.message).to.equal('Link relation not found: http://specs.openid.net/auth/2.0/x-provider');
+        expect(error.message).to.equal('No link relations in resource descriptor');
         expect(error.code).to.equal('ENODATA');
       });
       
