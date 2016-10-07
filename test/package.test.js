@@ -119,8 +119,11 @@ describe('fingro-webfinger', function() {
       });
       
       it('should yeild services', function() {
-        expect(services).to.be.an('object');
-        expect(Object.keys(services)).to.have.length(1);
+        expect(services).to.be.an('array');
+        expect(services).to.have.length(1);
+        expect(services[0]).to.deep.equal(
+          { location: 'https://openid.packetizer.com/paulej', type: undefined }
+        );
       });
     });
     
@@ -190,8 +193,11 @@ describe('fingro-webfinger', function() {
       });
       
       it('should yeild services', function() {
-        expect(services).to.be.an('object');
-        expect(Object.keys(services)).to.have.length(2);
+        expect(services).to.be.an('array');
+        expect(services).to.have.length(1);
+        expect(services[0]).to.deep.equal(
+          { location: 'https://willnorris.com/logo.jpg', type: 'image/jpeg' }
+        );
       });
     });
     
