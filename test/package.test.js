@@ -79,6 +79,9 @@ describe('fingro-webfinger', function() {
       it('should yeild services', function() {
         expect(services).to.be.an('object');
         expect(Object.keys(services)).to.have.length(10);
+        expect(services['http://webfinger.net/rel/avatar']).to.deep.equal([
+          { location: 'http://www.packetizer.com/people/paulej/images/paulej.jpg', type: 'image/jpeg' }
+        ]);
       });
     });
     
@@ -145,7 +148,8 @@ describe('fingro-webfinger', function() {
       
       it('should yield error', function() {
         expect(error).to.be.an.instanceOf(Error);
-        expect(error.message).to.equal('No links in JRD');
+        expect(error.message).to.equal('Link relation not found: http://specs.openid.net/auth/2.0/x-provider');
+        expect(error.code).to.equal('ENODATA');
       });
       
       it('should not yeild services', function() {
@@ -205,27 +209,25 @@ describe('fingro-webfinger', function() {
         ]
       });
       
-      var services;
+      var error, services;
       before(function(done) {
         var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
         
         resolver.resolveServices('acct:will@willnorris.com', 'http://webfinger.net/rel/x-avatar', function(err, s) {
-          if (err) { return done(err); }
+          error = err;
           services = s;
           done();
         })
       });
       
-      it('should call webfinger', function() {
-        expect(webfinger).to.have.been.calledOnce;
-        expect(webfinger).to.have.been.calledWith(
-          'acct:will@willnorris.com', 'http://webfinger.net/rel/x-avatar', { webfingerOnly: true }
-        );
+      it('should yield error', function() {
+        expect(error).to.be.an.instanceOf(Error);
+        expect(error.message).to.equal('Link relation not found: http://webfinger.net/rel/x-avatar');
+        expect(error.code).to.equal('ENODATA');
       });
       
-      it('should yeild services', function() {
-        expect(services).to.be.an('object');
-        expect(Object.keys(services)).to.have.length(2);
+      it('should not yeild services', function() {
+        expect(services).to.be.undefined;
       });
     });
     
