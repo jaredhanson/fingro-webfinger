@@ -43,7 +43,7 @@ describe('fingro-webfinger', function() {
       it('should call webfinger', function() {
         expect(webfinger).to.have.been.calledOnce;
         expect(webfinger).to.have.been.calledWith(
-          'acct:paulej@packetizer.com', { webfingerOnly: true }
+          'acct:paulej@packetizer.com', undefined, { webfingerOnly: true }
         );
       });
       
@@ -148,7 +148,7 @@ describe('fingro-webfinger', function() {
       it('should call webfinger', function() {
         expect(webfinger).to.have.been.calledOnce;
         expect(webfinger).to.have.been.calledWith(
-          'acct:paulej@packetizer.com', { webfingerOnly: true }
+          'acct:paulej@packetizer.com', undefined, { webfingerOnly: true }
         );
       });
       
