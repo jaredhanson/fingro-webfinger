@@ -1,7 +1,7 @@
 {
   "name": "fingro-webfinger",
   "version": "0.0.0",
-  "description": "WebFinger-based entity information discovery.",
+  "description": "WebFinger discovery protocol for Fingro and Node.js.",
   "keywords": [
     "webfinger"
   ],
