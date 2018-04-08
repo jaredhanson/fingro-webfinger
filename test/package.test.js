@@ -254,6 +254,7 @@ describe('fingro-webfinger', function() {
       it('should yield error', function() {
         expect(error).to.be.an.instanceOf(Error);
         expect(error.message).to.equal('Unable to find webfinger');
+        expect(error.code).to.equal('EPROTONOSUPPORT');
       });
       
       it('should not yeild services', function() {
