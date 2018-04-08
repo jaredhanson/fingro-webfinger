@@ -12,6 +12,67 @@ describe('fingro-webfinger', function() {
     expect(factory).to.be.an('function');
   });
   
+  describe('resolve', function() {
+    
+    describe('without type', function() {
+      var webfinger = sinon.stub().yields(null, {
+        properties: {
+          'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+          'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+          'http://packetizer.com/ns/name': 'Paul E. Jones'
+        },
+        aliases: [ 'h323:paulej@packetizer.com' ],
+        links: [
+          { type: 'image/jpeg',
+            href: 'http://www.packetizer.com/people/paulej/images/paulej.jpg',
+            rel: 'http://webfinger.net/rel/avatar' },
+          { href: 'https://openid.packetizer.com/paulej',
+            rel: 'http://specs.openid.net/auth/2.0/provider' }
+        ],
+        subject: 'acct:paulej@packetizer.com'
+      });
+      
+      var record;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolve('acct:paulej@packetizer.com', function(err, r) {
+          if (err) { return done(err); }
+          record = r;
+          done();
+        })
+      });
+      
+      it('should call webfinger', function() {
+        expect(webfinger).to.have.been.calledOnce;
+        expect(webfinger).to.have.been.calledWith(
+          'acct:paulej@packetizer.com', undefined, { webfingerOnly: true }
+        );
+      });
+      
+      it('should yield, record', function() {
+        expect(record).to.be.an('object');
+        expect(record).to.deep.equal({
+          aliases: [ 'h323:paulej@packetizer.com' ],
+          properties: {
+            'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+            'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+            'http://packetizer.com/ns/name': 'Paul E. Jones'
+          },
+          services: {
+            'http://webfinger.net/rel/avatar': [
+              { location: 'http://www.packetizer.com/people/paulej/images/paulej.jpg', mediaType: 'image/jpeg' }
+            ],
+            'http://specs.openid.net/auth/2.0/provider': [
+              { location: 'https://openid.packetizer.com/paulej', mediaType: undefined }
+            ]
+          }
+        });
+      });
+    });
+    
+  });
+  
   describe('resolveAliases', function() {
     
     describe('with aliases', function() {
