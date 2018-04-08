@@ -46,7 +46,7 @@ resolver.resolve('acct:paulej@packetizer.com', function(err, entity) {
 
 ## Considerations
 
-#### Implementation
+#### Network
 
 Note that the WebFinger protocol is, unfortunately, not widely implemented by
 popular mainstream online services like Google, Facebook, and Twitter.  The
