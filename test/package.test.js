@@ -117,6 +117,110 @@ describe('fingro-webfinger', function() {
     
   });
   
+  describe('resolveProperties', function() {
+    
+    describe('with properties', function() {
+      var webfinger = sinon.stub().yields(null, {
+        properties: {
+          'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+          'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+          'http://packetizer.com/ns/name': 'Paul E. Jones'
+        },
+        aliases: [ 'h323:paulej@packetizer.com' ],
+        links: [
+          { href: 'https://openid.packetizer.com/paulej',
+            rel: 'http://specs.openid.net/auth/2.0/provider' }
+        ],
+        subject: 'acct:paulej@packetizer.com'
+      });
+      
+      var properties;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveProperties('acct:paulej@packetizer.com', function(err, p) {
+          if (err) { return done(err); }
+          properties = p;
+          done();
+        })
+      });
+      
+      it('should call webfinger', function() {
+        expect(webfinger).to.have.been.calledOnce;
+        expect(webfinger).to.have.been.calledWith(
+          'acct:paulej@packetizer.com', { webfingerOnly: true }
+        );
+      });
+      
+      it('should yeild properties', function() {
+        expect(properties).to.be.an('object');
+        expect(properties).to.deep.equal({
+          'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+          'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+          'http://packetizer.com/ns/name': 'Paul E. Jones'
+        });
+      });
+    });
+    
+    describe('without properties', function() {
+      var webfinger = sinon.stub().yields(null, {
+        aliases: [ 'h323:paulej@packetizer.com' ],
+        links: [
+          { href: 'https://openid.packetizer.com/paulej',
+            rel: 'http://specs.openid.net/auth/2.0/provider' }
+        ],
+        subject: 'acct:paulej@packetizer.com'
+      });
+      
+      var properties, error;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveProperties('acct:paulej@packetizer.com', function(err, p) {
+          error = err;
+          properties = p;
+          done();
+        })
+      });
+      
+      it('should yield error', function() {
+        expect(error).to.be.an.instanceOf(Error);
+        expect(error.message).to.equal('No properties in resource descriptor');
+        expect(error.code).to.equal('ENODATA');
+      });
+      
+      it('should not yeild properties', function() {
+        expect(properties).to.be.undefined;
+      });
+    });
+    
+    describe('error due to WebFinger not supported', function() {
+      var webfinger = sinon.stub().yields(new Error("Unable to find webfinger"));
+      
+      var properties, error;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveProperties('acct:paulej@packetizer.com', function(err, p) {
+          error = err;
+          aliases = p;
+          done();
+        })
+      });
+      
+      it('should yield error', function() {
+        expect(error).to.be.an.instanceOf(Error);
+        expect(error.message).to.equal('Unable to find webfinger');
+        expect(error.code).to.equal('EPROTONOSUPPORT');
+      });
+      
+      it('should not yeild properties', function() {
+        expect(properties).to.be.undefined;
+      });
+    });
+    
+  });
+  
   describe('resolveServices', function() {
     
     describe('without type', function() {
