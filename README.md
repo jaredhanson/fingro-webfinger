@@ -1,5 +1,8 @@
 # fingro-webfinger
 
+[Fingro](https://github.com/jaredhanson/fingro) resolver implementing support
+for [WebFinger](https://tools.ietf.org/html/rfc7033).
+
 Status:
 [![Version](https://img.shields.io/npm/v/fingro-webfinger.svg?label=version)](https://www.npmjs.com/package/fingro-webfinger)
 [![Build](https://img.shields.io/travis/jaredhanson/fingro-webfinger.svg)](https://travis-ci.org/jaredhanson/fingro-webfinger)
