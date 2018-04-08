@@ -47,10 +47,71 @@ describe('fingro-webfinger', function() {
         );
       });
       
-      it('should yeild services', function() {
+      it('should yeild aliases', function() {
         expect(aliases).to.be.an('array');
         expect(aliases).to.have.length(1);
         expect(aliases).to.deep.equal([ 'h323:paulej@packetizer.com' ]);
+      });
+    });
+    
+    describe('without aliases', function() {
+      var webfinger = sinon.stub().yields(null, {
+        properties: {
+          'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+          'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+          'http://packetizer.com/ns/name': 'Paul E. Jones'
+        },
+        links: [
+          { href: 'https://openid.packetizer.com/paulej',
+            rel: 'http://specs.openid.net/auth/2.0/provider' }
+        ],
+        subject: 'acct:paulej@packetizer.com'
+      });
+      
+      var aliases, error;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveAliases('acct:paulej@packetizer.com', function(err, a) {
+          error = err;
+          aliases = a;
+          done();
+        })
+      });
+      
+      it('should yield error', function() {
+        expect(error).to.be.an.instanceOf(Error);
+        expect(error.message).to.equal('No aliases in resource descriptor');
+        expect(error.code).to.equal('ENODATA');
+      });
+      
+      it('should not yeild aliases', function() {
+        expect(aliases).to.be.undefined;
+      });
+    });
+    
+    describe('error due to WebFinger not supported', function() {
+      var webfinger = sinon.stub().yields(new Error("Unable to find webfinger"));
+      
+      var aliases, error;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveAliases('acct:paulej@packetizer.com', function(err, a) {
+          error = err;
+          aliases = a;
+          done();
+        })
+      });
+      
+      it('should yield error', function() {
+        expect(error).to.be.an.instanceOf(Error);
+        expect(error.message).to.equal('Unable to find webfinger');
+        expect(error.code).to.equal('EPROTONOSUPPORT');
+      });
+      
+      it('should not yeild aliases', function() {
+        expect(aliases).to.be.undefined;
       });
     });
     
