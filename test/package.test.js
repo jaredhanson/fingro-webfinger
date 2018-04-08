@@ -12,6 +12,50 @@ describe('fingro-webfinger', function() {
     expect(factory).to.be.an('function');
   });
   
+  describe('resolveAliases', function() {
+    
+    describe('with aliases', function() {
+      var webfinger = sinon.stub().yields(null, {
+        properties: {
+          'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+          'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+          'http://packetizer.com/ns/name': 'Paul E. Jones'
+        },
+        aliases: [ 'h323:paulej@packetizer.com' ],
+        links: [
+          { href: 'https://openid.packetizer.com/paulej',
+            rel: 'http://specs.openid.net/auth/2.0/provider' }
+        ],
+        subject: 'acct:paulej@packetizer.com'
+      });
+      
+      var aliases;
+      before(function(done) {
+        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+        
+        resolver.resolveAliases('acct:paulej@packetizer.com', function(err, a) {
+          if (err) { return done(err); }
+          aliases = a;
+          done();
+        })
+      });
+      
+      it('should call webfinger', function() {
+        expect(webfinger).to.have.been.calledOnce;
+        expect(webfinger).to.have.been.calledWith(
+          'acct:paulej@packetizer.com', { webfingerOnly: true }
+        );
+      });
+      
+      it('should yeild services', function() {
+        expect(aliases).to.be.an('array');
+        expect(aliases).to.have.length(1);
+        expect(aliases).to.deep.equal([ 'h323:paulej@packetizer.com' ]);
+      });
+    });
+    
+  });
+  
   describe('resolveServices', function() {
     
     describe('without type', function() {
