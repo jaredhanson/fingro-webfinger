@@ -1,7 +1,7 @@
 # fingro-webfinger
 
 [Fingro](https://github.com/jaredhanson/fingro) resolver implementing support
-for [WebFinger](https://tools.ietf.org/html/rfc7033).
+for [WebFinger](https://webfinger.net/).
 
 Status:
 [![Version](https://img.shields.io/npm/v/fingro-webfinger.svg?label=version)](https://www.npmjs.com/package/fingro-webfinger)
@@ -48,10 +48,10 @@ resolver.resolve('acct:paulej@packetizer.com', function(err, entity) {
 
 #### Network
 
-Note that the WebFinger protocol is, unfortunately, not widely implemented by
-popular mainstream online services like Google, Facebook, and Twitter.  The
-grassroots [IndieWeb](https://indieweb.org/) movement is building a people-
-focused alternative to such networks, and they provide more [information](https://indieweb.org/WebFinger)
+The WebFinger protocol is, unfortunately, not widely implemented by popular
+mainstream online services like Google, Facebook, and Twitter.  The grassroots
+[IndieWeb](https://indieweb.org/) movement is building a people-focused
+alternative to such services, and they provide more [information](https://indieweb.org/WebFinger)
 about the protocol, including services that implement support.
 
 ## License
