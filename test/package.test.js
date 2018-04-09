@@ -53,6 +53,7 @@ describe('fingro-webfinger', function() {
       it('should yield, record', function() {
         expect(record).to.be.an('object');
         expect(record).to.deep.equal({
+          subject: 'acct:paulej@packetizer.com',
           aliases: [ 'h323:paulej@packetizer.com' ],
           properties: {
             'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
