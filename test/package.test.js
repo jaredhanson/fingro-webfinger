@@ -55,7 +55,7 @@ describe('fingro-webfinger', function() {
         expect(record).to.deep.equal({
           subject: 'acct:paulej@packetizer.com',
           aliases: [ 'h323:paulej@packetizer.com' ],
-          properties: {
+          attributes: {
             'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
             'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
             'http://packetizer.com/ns/name': 'Paul E. Jones'
@@ -179,7 +179,7 @@ describe('fingro-webfinger', function() {
     
   });
   
-  describe('resolveProperties', function() {
+  describe('resolveAttributes', function() {
     
     describe('with properties', function() {
       var webfinger = sinon.stub().yields(null, {
@@ -196,13 +196,13 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var properties;
+      var attributes;
       before(function(done) {
         var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
         
-        resolver.resolveProperties('acct:paulej@packetizer.com', function(err, p) {
+        resolver.resolveAttributes('acct:paulej@packetizer.com', function(err, p) {
           if (err) { return done(err); }
-          properties = p;
+          attributes = p;
           done();
         })
       });
@@ -214,9 +214,9 @@ describe('fingro-webfinger', function() {
         );
       });
       
-      it('should yeild properties', function() {
-        expect(properties).to.be.an('object');
-        expect(properties).to.deep.equal({
+      it('should yeild attributes', function() {
+        expect(attributes).to.be.an('object');
+        expect(attributes).to.deep.equal({
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
           'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
           'http://packetizer.com/ns/name': 'Paul E. Jones'
@@ -234,13 +234,13 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var properties, error;
+      var attributes, error;
       before(function(done) {
         var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
         
-        resolver.resolveProperties('acct:paulej@packetizer.com', function(err, p) {
+        resolver.resolveAttributes('acct:paulej@packetizer.com', function(err, p) {
           error = err;
-          properties = p;
+          attributes = p;
           done();
         })
       });
@@ -251,19 +251,19 @@ describe('fingro-webfinger', function() {
         expect(error.code).to.equal('ENODATA');
       });
       
-      it('should not yeild properties', function() {
-        expect(properties).to.be.undefined;
+      it('should not yeild attributes', function() {
+        expect(attributes).to.be.undefined;
       });
     });
     
     describe('error due to WebFinger not supported', function() {
       var webfinger = sinon.stub().yields(new Error("Unable to find webfinger"));
       
-      var properties, error;
+      var attributes, error;
       before(function(done) {
         var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
         
-        resolver.resolveProperties('acct:paulej@packetizer.com', function(err, p) {
+        resolver.resolveAttributes('acct:paulej@packetizer.com', function(err, p) {
           error = err;
           aliases = p;
           done();
@@ -276,8 +276,8 @@ describe('fingro-webfinger', function() {
         expect(error.code).to.equal('EPROTONOSUPPORT');
       });
       
-      it('should not yeild properties', function() {
-        expect(properties).to.be.undefined;
+      it('should not yeild attributes', function() {
+        expect(attributes).to.be.undefined;
       });
     });
     
