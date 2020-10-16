@@ -26,7 +26,7 @@
   ],
   "main": "./lib",
   "dependencies": {
-    "webfinger": "^0.4.2"
+    "webfinger": "git+https://github.com/jaredhanson/node-webfinger.git#develop"
   },
   "devDependencies": {
     "make-node": "^0.3.0",
