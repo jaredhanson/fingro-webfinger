@@ -266,9 +266,9 @@ describe('fingro-webfinger', function() {
         ]);
         done();
       });
-    });
+    }); // should yield services when called without type argument
     
-    describe('with type, to service that filters link relations', function() {
+    it('should yield service when service filters link relations', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -283,34 +283,24 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var services;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();  
+      resolver.resolveServices('acct:paulej@packetizer.com', 'http://specs.openid.net/auth/2.0/provider', function(err, services) {
+        if (err) { return done(err); }
         
-        resolver.resolveServices('acct:paulej@packetizer.com', 'http://specs.openid.net/auth/2.0/provider', function(err, s) {
-          if (err) { return done(err); }
-          services = s;
-          done();
-        })
-      });
-      
-      it('should call webfinger', function() {
         expect(webfinger).to.have.been.calledOnce;
         expect(webfinger).to.have.been.calledWith(
           'acct:paulej@packetizer.com', 'http://specs.openid.net/auth/2.0/provider', { webfingerOnly: true }
         );
-      });
-      
-      it('should yeild services', function() {
         expect(services).to.be.an('array');
         expect(services).to.have.length(1);
         expect(services[0]).to.deep.equal(
           { location: 'https://openid.packetizer.com/paulej', mediaType: undefined }
         );
+        done();
       });
-    });
+    }); // should yield service when service filters link relations
     
-    describe('with unsupported type, to service that filters link relations', function() {
+    it('should yield error when no services exist in response from service that filters link relations', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -321,27 +311,17 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var error, services;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
-        
-        resolver.resolveServices('acct:paulej@packetizer.com', 'http://specs.openid.net/auth/2.0/x-provider', function(err, s) {
-          error = err;
-          services = s;
-          done();
-        })
-      });
-      
-      it('should yield error', function() {
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolveServices('acct:paulej@packetizer.com', 'http://specs.openid.net/auth/2.0/x-provider', function(err, s) {
+        error = err;
+        services = s;
         expect(error).to.be.an.instanceOf(Error);
         expect(error.message).to.equal('No link relations in resource descriptor');
         expect(error.code).to.equal('ENODATA');
-      });
-      
-      it('should not yeild services', function() {
         expect(services).to.be.undefined;
+        done();
       });
-    });
+    }); // should yield error when no services exist when link relations are filtered by service
     
     describe('with type, to service that does not filter link relations', function() {
       var webfinger = sinon.stub().yields(null, {
