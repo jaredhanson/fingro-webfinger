@@ -376,31 +376,19 @@ describe('fingro-webfinger', function() {
       });
     }); // should yield error when no services exist in response from service that does not filter link relations
     
-    describe('error due to WebFinger not supported', function() {
+    it('should yield error when protocol is not supported', function(done) {
       var webfinger = sinon.stub().yields(new Error("Unable to find webfinger"));
       
-      var error, services;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
-        
-        resolver.resolveServices('acct:joe@example.com', 'http://specs.openid.net/auth/2.0/provider', function(err, s) {
-          error = err;
-          services = s;
-          done();
-        })
-      });
-      
-      it('should yield error', function() {
-        expect(error).to.be.an.instanceOf(Error);
-        expect(error.message).to.equal('Unable to find webfinger');
-        expect(error.code).to.equal('EPROTONOSUPPORT');
-      });
-      
-      it('should not yeild services', function() {
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();  
+      resolver.resolveServices('acct:joe@example.com', 'http://specs.openid.net/auth/2.0/provider', function(err, services) {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.message).to.equal('Unable to find webfinger');
+        expect(err.code).to.equal('EPROTONOSUPPORT');
         expect(services).to.be.undefined;
+        done();
       });
-    });
+    }); // should yield error when protocol is not supported
     
-  });
+  }); // resolveServices
   
 });
