@@ -14,7 +14,7 @@ describe('fingro-webfinger', function() {
   
   describe('resolve', function() {
     
-    describe('without type', function() {
+    it('should yield record when called without type argument', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -32,25 +32,14 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var record;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolve('acct:paulej@packetizer.com', function(err, record) {
+        if (err) { return done(err); }
         
-        resolver.resolve('acct:paulej@packetizer.com', function(err, r) {
-          if (err) { return done(err); }
-          record = r;
-          done();
-        })
-      });
-      
-      it('should call webfinger', function() {
         expect(webfinger).to.have.been.calledOnce;
         expect(webfinger).to.have.been.calledWith(
           'acct:paulej@packetizer.com', undefined, { webfingerOnly: true }
         );
-      });
-      
-      it('should yield, record', function() {
         expect(record).to.be.an('object');
         expect(record).to.deep.equal({
           subject: 'acct:paulej@packetizer.com',
@@ -69,10 +58,12 @@ describe('fingro-webfinger', function() {
             ]
           }
         });
+        
+        done();
       });
-    });
+    }); // should yield record when called without type argument
     
-  });
+  }); // resolve
   
   describe('resolveAliases', function() {
     
