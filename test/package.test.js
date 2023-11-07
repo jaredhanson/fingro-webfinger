@@ -138,7 +138,7 @@ describe('fingro-webfinger', function() {
   
   describe('resolveAttributes', function() {
     
-    describe('with properties', function() {
+    it('should yield attributes', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -153,35 +153,25 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var attributes;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolveAttributes('acct:paulej@packetizer.com', function(err, attributes) {
+        if (err) { return done(err); }
         
-        resolver.resolveAttributes('acct:paulej@packetizer.com', function(err, p) {
-          if (err) { return done(err); }
-          attributes = p;
-          done();
-        })
-      });
-      
-      it('should call webfinger', function() {
         expect(webfinger).to.have.been.calledOnce;
         expect(webfinger).to.have.been.calledWith(
           'acct:paulej@packetizer.com', undefined, { webfingerOnly: true }
         );
-      });
-      
-      it('should yeild attributes', function() {
         expect(attributes).to.be.an('object');
         expect(attributes).to.deep.equal({
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
           'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
           'http://packetizer.com/ns/name': 'Paul E. Jones'
         });
+        done();
       });
-    });
+    }); // should yield attributes
     
-    describe('without properties', function() {
+    it('should yield error when no attributes exist', function(done) {
       var webfinger = sinon.stub().yields(null, {
         aliases: [ 'h323:paulej@packetizer.com' ],
         links: [
@@ -191,54 +181,30 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var attributes, error;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
-        
-        resolver.resolveAttributes('acct:paulej@packetizer.com', function(err, p) {
-          error = err;
-          attributes = p;
-          done();
-        })
-      });
-      
-      it('should yield error', function() {
-        expect(error).to.be.an.instanceOf(Error);
-        expect(error.message).to.equal('No properties in resource descriptor');
-        expect(error.code).to.equal('ENODATA');
-      });
-      
-      it('should not yeild attributes', function() {
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolveAttributes('acct:paulej@packetizer.com', function(err, attributes) {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.message).to.equal('No properties in resource descriptor');
+        expect(err.code).to.equal('ENODATA');
         expect(attributes).to.be.undefined;
+        done();
       });
-    });
+    }); // should yield error when no attributes exist
     
-    describe('error due to WebFinger not supported', function() {
+    it('should yield error when protocol is not supported', function(done) {
       var webfinger = sinon.stub().yields(new Error("Unable to find webfinger"));
       
-      var attributes, error;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
-        
-        resolver.resolveAttributes('acct:paulej@packetizer.com', function(err, p) {
-          error = err;
-          aliases = p;
-          done();
-        })
-      });
-      
-      it('should yield error', function() {
-        expect(error).to.be.an.instanceOf(Error);
-        expect(error.message).to.equal('Unable to find webfinger');
-        expect(error.code).to.equal('EPROTONOSUPPORT');
-      });
-      
-      it('should not yeild attributes', function() {
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolveAttributes('acct:paulej@packetizer.com', function(err, attributes) {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.message).to.equal('Unable to find webfinger');
+        expect(err.code).to.equal('EPROTONOSUPPORT');
         expect(attributes).to.be.undefined;
+        done();
       });
-    });
+    }); // should yield error when protocol is not supported
     
-  });
+  }); // resolveAttributes
   
   describe('resolveServices', function() {
     
