@@ -67,7 +67,7 @@ describe('fingro-webfinger', function() {
   
   describe('resolveAliases', function() {
     
-    describe('with aliases', function() {
+    it('should yield aliases', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -82,30 +82,20 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var aliases;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolveAliases('acct:paulej@packetizer.com', function(err, aliases) {
+        if (err) { return done(err); }
         
-        resolver.resolveAliases('acct:paulej@packetizer.com', function(err, a) {
-          if (err) { return done(err); }
-          aliases = a;
-          done();
-        })
-      });
-      
-      it('should call webfinger', function() {
         expect(webfinger).to.have.been.calledOnce;
         expect(webfinger).to.have.been.calledWith(
           'acct:paulej@packetizer.com', undefined, { webfingerOnly: true }
         );
-      });
-      
-      it('should yeild aliases', function() {
         expect(aliases).to.be.an('array');
         expect(aliases).to.have.length(1);
         expect(aliases).to.deep.equal([ 'h323:paulej@packetizer.com' ]);
+        done();
       });
-    });
+    }); // should yield aliases
     
     describe('without aliases', function() {
       var webfinger = sinon.stub().yields(null, {
@@ -168,7 +158,7 @@ describe('fingro-webfinger', function() {
       });
     });
     
-  });
+  }); // resolveAliases
   
   describe('resolveAttributes', function() {
     
