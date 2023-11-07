@@ -97,7 +97,7 @@ describe('fingro-webfinger', function() {
       });
     }); // should yield aliases
     
-    describe('without aliases', function() {
+    it('should yield error when no aliases exist', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -111,52 +111,28 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var aliases, error;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
-        
-        resolver.resolveAliases('acct:paulej@packetizer.com', function(err, a) {
-          error = err;
-          aliases = a;
-          done();
-        })
-      });
-      
-      it('should yield error', function() {
-        expect(error).to.be.an.instanceOf(Error);
-        expect(error.message).to.equal('No aliases in resource descriptor');
-        expect(error.code).to.equal('ENODATA');
-      });
-      
-      it('should not yeild aliases', function() {
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolveAliases('acct:paulej@packetizer.com', function(err, aliases) {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.message).to.equal('No aliases in resource descriptor');
+        expect(err.code).to.equal('ENODATA');
         expect(aliases).to.be.undefined;
+        done();
       });
-    });
+    }); // should yield error when no aliases exist
     
-    describe('error due to WebFinger not supported', function() {
+    it('should yield error when protocol is not supported', function(done) {
       var webfinger = sinon.stub().yields(new Error("Unable to find webfinger"));
       
-      var aliases, error;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
-        
-        resolver.resolveAliases('acct:paulej@packetizer.com', function(err, a) {
-          error = err;
-          aliases = a;
-          done();
-        })
-      });
-      
-      it('should yield error', function() {
-        expect(error).to.be.an.instanceOf(Error);
-        expect(error.message).to.equal('Unable to find webfinger');
-        expect(error.code).to.equal('EPROTONOSUPPORT');
-      });
-      
-      it('should not yeild aliases', function() {
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolveAliases('acct:paulej@packetizer.com', function(err, aliases) {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.message).to.equal('Unable to find webfinger');
+        expect(err.code).to.equal('EPROTONOSUPPORT');
         expect(aliases).to.be.undefined;
+        done();
       });
-    });
+    }); // should yield error when protocol is not supported
     
   }); // resolveAliases
   
