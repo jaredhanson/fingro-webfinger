@@ -58,7 +58,6 @@ describe('fingro-webfinger', function() {
             ]
           }
         });
-        
         done();
       });
     }); // should yield record when called without type argument
@@ -208,7 +207,7 @@ describe('fingro-webfinger', function() {
   
   describe('resolveServices', function() {
     
-    describe('without type', function() {
+    it('should yield services when called without type argument', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -252,30 +251,20 @@ describe('fingro-webfinger', function() {
         subject: 'acct:paulej@packetizer.com'
       });
       
-      var services;
-      before(function(done) {
-        var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolveServices('acct:paulej@packetizer.com', function(err, services) {
+        if (err) { return done(err); }
         
-        resolver.resolveServices('acct:paulej@packetizer.com', function(err, s) {
-          if (err) { return done(err); }
-          services = s;
-          done();
-        })
-      });
-      
-      it('should call webfinger', function() {
         expect(webfinger).to.have.been.calledOnce;
         expect(webfinger).to.have.been.calledWith(
           'acct:paulej@packetizer.com', undefined, { webfingerOnly: true }
         );
-      });
-      
-      it('should yeild services', function() {
         expect(services).to.be.an('object');
         expect(Object.keys(services)).to.have.length(10);
         expect(services['http://webfinger.net/rel/avatar']).to.deep.equal([
           { location: 'http://www.packetizer.com/people/paulej/images/paulej.jpg', mediaType: 'image/jpeg' }
         ]);
+        done();
       });
     });
     
