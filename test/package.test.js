@@ -14,6 +14,46 @@ describe('fingro-webfinger', function() {
   
   describe('resolve', function() {
     
+    it('should yield record with service when service filters link relations', function(done) {
+      var webfinger = sinon.stub().yields(null, {
+        properties: {
+          'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+          'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+          'http://packetizer.com/ns/name': 'Paul E. Jones'
+        },
+        aliases: [ 'h323:paulej@packetizer.com' ],
+        links: [
+          { href: 'https://openid.packetizer.com/paulej',
+            rel: 'http://specs.openid.net/auth/2.0/provider' }
+        ],
+        subject: 'acct:paulej@packetizer.com'
+      });
+      
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolve('acct:paulej@packetizer.com', 'http://specs.openid.net/auth/2.0/provider', function(err, record) {
+        if (err) { return done(err); }
+        
+        expect(webfinger).to.have.been.calledOnce;
+        expect(webfinger).to.have.been.calledWith(
+          'acct:paulej@packetizer.com', 'http://specs.openid.net/auth/2.0/provider', { webfingerOnly: true }
+        );
+        expect(record).to.be.an('object');
+        expect(record).to.deep.equal({
+          subject: 'acct:paulej@packetizer.com',
+          aliases: [ 'h323:paulej@packetizer.com' ],
+          attributes: {
+            'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+            'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+            'http://packetizer.com/ns/name': 'Paul E. Jones'
+          },
+          services: [
+            { location: 'https://openid.packetizer.com/paulej', mediaType: undefined }
+          ]
+        });
+        done();
+      });
+    }); // should yield record with service when service filters link relations
+    
     it('should yield record with service when service does not filter link relations', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
