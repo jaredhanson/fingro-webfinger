@@ -331,7 +331,7 @@ describe('fingro-webfinger', function() {
       });
     }); // should yield all services when called without type argument
     
-    it('should yield error when no services exist in response from service that filters link relations', function(done) {
+    it('should yield error when no service exists in response from service that filters link relations', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -350,9 +350,9 @@ describe('fingro-webfinger', function() {
         expect(services).to.be.undefined;
         done();
       });
-    }); // should yield error when no services exist in response from service that filters link relations
+    }); // should yield error when no service exists in response from service that filters link relations
     
-    it('should yield error when no services exist in response from service that does not filter link relations', function(done) {
+    it('should yield error when no service exists in response from service that does not filter link relations', function(done) {
       var webfinger = sinon.stub().yields(null, {
         subject: 'acct:will@willnorris.com',
         aliases: [ 'mailto:will@willnorris.com', 'https://willnorris.com/' ],
@@ -374,7 +374,7 @@ describe('fingro-webfinger', function() {
         expect(services).to.be.undefined;
         done();
       });
-    }); // should yield error when no services exist in response from service that does not filter link relations
+    }); // should yield error when no service exists in response from service that does not filter link relations
     
     it('should yield error when no services exist when called without type argument', function(done) {
       var webfinger = sinon.stub().yields(null, {
