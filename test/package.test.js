@@ -207,7 +207,7 @@ describe('fingro-webfinger', function() {
   
   describe('resolveServices', function() {
     
-    it('should yield services when service filters link relations', function(done) {
+    it('should yield service when service filters link relations', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -237,9 +237,9 @@ describe('fingro-webfinger', function() {
         );
         done();
       });
-    }); // should yield services when service filters link relations
+    }); // should yield service when service filters link relations
     
-    it('should yield services when service does not filter link relations', function(done) {
+    it('should yield service when service does not filter link relations', function(done) {
       var webfinger = sinon.stub().yields(null, {
         subject: 'acct:will@willnorris.com',
         aliases: [ 'mailto:will@willnorris.com', 'https://willnorris.com/' ],
@@ -268,7 +268,7 @@ describe('fingro-webfinger', function() {
         );
         done();
       });
-    }); // should yield services when service does not filter link relations
+    }); // should yield service when service does not filter link relations
     
     it('should yield all services when called without type argument', function(done) {
       var webfinger = sinon.stub().yields(null, {
