@@ -376,6 +376,27 @@ describe('fingro-webfinger', function() {
       });
     }); // should yield error when no services exist in response from service that does not filter link relations
     
+    it('should yield error when no services exist when called without type argument', function(done) {
+      var webfinger = sinon.stub().yields(null, {
+        properties: {
+          'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
+          'http://packetizer.com/ns/activated': '2000-02-17T03:00:00Z',
+          'http://packetizer.com/ns/name': 'Paul E. Jones'
+        },
+        aliases: [ 'h323:paulej@packetizer.com' ],
+        subject: 'acct:paulej@packetizer.com'
+      });
+      
+      var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
+      resolver.resolveServices('acct:paulej@packetizer.com', function(err, services) {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.message).to.equal('No link relations in resource descriptor');
+        expect(err.code).to.equal('ENODATA');
+        expect(services).to.be.undefined;
+        done();
+      });
+    }); // should yield error when no services exist when querying for all services
+    
     it('should yield error when protocol is not supported', function(done) {
       var webfinger = sinon.stub().yields(new Error("Unable to find webfinger"));
       
