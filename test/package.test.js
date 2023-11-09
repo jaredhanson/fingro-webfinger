@@ -145,7 +145,7 @@ describe('fingro-webfinger', function() {
       });
     }); // should yield record with all services when called without type argument
     
-    it('should yield error when querying for unsupported service', function(done) {
+    it('should yield error when querying for unsupported service from service that does not filter link relations', function(done) {
       var webfinger = sinon.stub().yields(null, {
         properties: {
           'http://packetizer.com/ns/name#zh-CN': '保罗‧琼斯',
@@ -175,7 +175,7 @@ describe('fingro-webfinger', function() {
         expect(record).to.be.undefined;
         done();
       });
-    }); // should yield error when querying for unsupported service
+    }); // should yield error when querying for unsupported service from service that does not filter link relations
     
   }); // resolve
   
