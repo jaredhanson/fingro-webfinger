@@ -1,6 +1,6 @@
 {
   "name": "fingro-webfinger",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "WebFinger discovery protocol for Fingro and Node.js.",
   "keywords": [
     "webfinger"
