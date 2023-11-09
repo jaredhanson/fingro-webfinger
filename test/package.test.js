@@ -460,7 +460,7 @@ describe('fingro-webfinger', function() {
       var resolver = $require('..', { webfinger: { webfinger: webfinger } })();
       resolver.resolveServices('acct:paulej@packetizer.com', 'http://specs.openid.net/auth/2.0/x-provider', function(err, services) {
         expect(err).to.be.an.instanceOf(Error);
-        expect(err.message).to.equal('No link relations in resource descriptor');
+        expect(err.message).to.equal('Link relation not found: http://specs.openid.net/auth/2.0/x-provider');
         expect(err.code).to.equal('ENODATA');
         expect(services).to.be.undefined;
         done();
